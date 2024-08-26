@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Model_DBContext;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Abstractions;
 
 namespace Odev_v9
 {
@@ -13,10 +15,16 @@ namespace Odev_v9
 
             builder.Services.AddHttpClient();
             builder.Services.AddSession();
-
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options => //login logout için yapýldý bu
+            {
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            });
             builder.Services.AddDbContext<Blog_DB>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("connStr"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("connStr")); //bi yerde kullandým diye yaptým bunu
             });
 
             // Add services to the container.

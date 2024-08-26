@@ -1,0 +1,84 @@
+﻿@using DataLayer.Model_VM
+@model GuncellemeListe
+
+<h2>Kullanıcı Listesi</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>MailDogrumu</th>
+            <th>Kullanıcı</th>
+            <th>Admin</th>
+            <th>Yazar</th>
+            <th>Değiştir</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.isim</td>
+                <td>@user.maildog</td>
+                <td>@user.usermi</td>
+                <td>@user.adminmi</td>
+                <td>@user.yazarmi</td>
+                <td>
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="maildog" />
+                        <input type="hidden" name="NewValue" value="true" />
+                        <button type="submit" class="btn btn-success">MailDogrulama Yap</button>
+                    </form>
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="maildog" />
+                        <input type="hidden" name="NewValue" value="false" />
+                        <button type="submit" class="btn btn-danger">MailDogrulama Yapma</button>
+                    </form>
+
+                    <!-- Admin Durumu Değiştir -->
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="usermi" />
+                        <input type="hidden" name="NewValue" value="true" />
+                        <button type="submit" class="btn btn-success">User Yap</button>
+                    </form>
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="usermi" />
+                        <input type="hidden" name="NewValue" value="false" />
+                        <button type="submit" class="btn btn-danger">User Yapma</button>
+                    </form>
+
+                    <!-- Yazar Durumu Değiştir -->
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="adminmi" />
+                        <input type="hidden" name="NewValue" value="true" />
+                        <button type="submit" class="btn btn-success">Yazar Yap</button>
+                    </form>
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="adminmi" />
+                        <input type="hidden" name="NewValue" value="false" />
+                        <button type="submit" class="btn btn-danger">Yazar Yapma</button>
+                    </form>
+                    <!-- Yazar Durumu Değiştir -->
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="yazarmi" />
+                        <input type="hidden" name="NewValue" value="true" />
+                        <button type="submit" class="btn btn-success">Yazar Yap</button>
+                    </form>
+                    <form asp-action="UpdateUser" method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedUserEmail" value="@user.isim" />
+                        <input type="hidden" name="UpdateType" value="yazarmi" />
+                        <input type="hidden" name="NewValue" value="false" />
+                        <button type="submit" class="btn btn-danger">Yazar Yapma</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

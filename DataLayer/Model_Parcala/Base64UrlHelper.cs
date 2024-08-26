@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Model_Parcala
 {
-    public class Base64UrlHelper
+    public class Base64UrlHelper //internetten bulundu bu çalışıyor. Base 64 işlemi yapıp token i parçalıyor
     {
         public static string Base64UrlDecode(string base64Url)
         {

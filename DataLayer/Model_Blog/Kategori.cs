@@ -12,6 +12,6 @@ namespace DataLayer.Model_Blog
 
         public ICollection<Makale> makales { get; set; }
 
-        //public ICollection<Kullanici> Kullanicilar { get; set; }
+        //public ICollection<Kullanici> Kullanicilar { get; set; } //iptal mı etmişim acaba bunu ne yaptımdı
     }
 }

@@ -29,7 +29,7 @@ namespace Odev_v9.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Makaleler()
+        public async Task<IActionResult> Makaleler() //klavyem kırık boşluk acıtıyor elimi
         {
             string token = HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
@@ -43,11 +43,13 @@ namespace Odev_v9.Controllers
                 ViewBag.Mesaj = "Token yok olm nereye gidiyorsun";
                 return View("Ekle");
             }
+            
+            //parçala getir 
 
             string jsonPayload = Base64UrlHelper.Base64UrlDecode(token.Split('.')[1]);
             var payload = JsonConvert.DeserializeObject<JwtPayload>(jsonPayload);
             string yazarid = (payload.Name);
-            //var serializeUser = JsonConvert.SerializeObject(yazarid);
+            
 
             // API'ye veri gönderme
             Sorgu sor = new Sorgu()
@@ -56,7 +58,7 @@ namespace Odev_v9.Controllers
             };
 
             var payloaad = sor;
-            //string yazarid = payloaad.Name;
+            
             
             var content = new StringContent(JsonConvert.SerializeObject(payloaad), Encoding.UTF8, "application/json");
 
@@ -81,7 +83,7 @@ namespace Odev_v9.Controllers
 
                     ViewBag.Mesaj = $"{response.StatusCode}";
                     return View("Ekle");
-                    //return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                    
                 }
             }
             catch (HttpRequestException ex)
@@ -92,8 +94,8 @@ namespace Odev_v9.Controllers
             
         }
 
-        [HttpGet]
-        public IActionResult MakaleYaz()
+        [HttpGet("IOweMySoul")]
+        public IActionResult MakaleyiYaz() //yazma viewi getir (token burda kullanılıyor olabilir hatırlamıyorum. Kullanmıyor galiba)
         {
             string token = HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
@@ -102,7 +104,7 @@ namespace Odev_v9.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost] //api a gönderen yer burda
         public async Task<IActionResult> Yaz(MakaleViewModel model)
         {
             // Token'ı al
@@ -115,7 +117,7 @@ namespace Odev_v9.Controllers
                 return View("Ekle");
             }
 
-            // HttpClient oluştur ve Authorization header'ını ayarla
+           
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -127,6 +129,7 @@ namespace Odev_v9.Controllers
             var payload = JsonConvert.DeserializeObject<JwtPayload>(jsonPayload);
             string yazarid = payload.Name;
             model.Yaz=yazarid;
+
             // Model verilerini JSON formatına dönüştür
             var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
@@ -139,7 +142,7 @@ namespace Odev_v9.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseContent = await response.Content.ReadAsStringAsync();
-                    //return Ok(responseContent);
+                    
                     ViewBag.Mesaj = responseContent;
                     return View("Ekle");
                 }
@@ -157,7 +160,7 @@ namespace Odev_v9.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> Icerik(string sorgu) //Burada MVC döndürecek. MVC YOK !!!
+        public async Task<IActionResult> Icerik(string sorgu) //Burada MVC döndürecek. MVC YOK !!! Yok çalışıyormuş bu yav. Üstten başlığın ordan tuş var basınca (Viewleri tamamen ben yapmadım) bunu getiriyor
         {
             string token = HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();

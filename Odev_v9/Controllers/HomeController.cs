@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Odev_v9.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : Controller //buraya da aslýnda þeyetmek lazým 1-2 gösterilecek ayar falan
     {
         private readonly ILogger<HomeController> _logger;
 

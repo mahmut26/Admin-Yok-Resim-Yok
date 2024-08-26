@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DataLayer.Model_Servis
 {
-    public class EmailService:IEmailSender
+    public class EmailService:IEmailSender //internetten buldum bunuda mail atıyor işte
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmailService> _logger;

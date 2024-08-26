@@ -6,15 +6,19 @@ using System.Text;
 using DataLayer.Model_VM;
 using DataLayer.Model_Hatalar;
 using Azure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using DataLayer.Model_Parcala;
+using DataLayer.Model_Blog;
 
 namespace Odev_v9.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : Controller //bak şimdi burası önem arz ediyor. Neden mi şundan ötürü "logine" bak burda
     {
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            return View(); //register viewi 
         }
 
         [HttpPost]
@@ -37,20 +41,20 @@ namespace Odev_v9.Controllers
 
                 string json = await result.Content.ReadAsStringAsync();
 
-                //var mesaj = result.Content.ReadFromJsonAsync<string>();
+               
                 if (result.Content.Headers.ContentType.MediaType == "application/json")
                 {
-                    //string json = await result.Content.ReadAsStringAsync();
+                    
                     List<JsonHata> requirements = JsonConvert.DeserializeObject<List<JsonHata>>(json);
                     TempData["Requirements"] = JsonConvert.SerializeObject(requirements);
 
-                    return RedirectToAction("DisplayRequirementsL");
+                    return RedirectToAction("DisplayRequirementsL"); //hata liste olursa böyle döncek 
                 }
                 else
                 {
                     TempData["Requirements"] = json;
 
-                    return RedirectToAction("DisplayRequirements");
+                    return RedirectToAction("DisplayRequirements"); //tekse böyle sırf bunun için uğraştımdı vaktinde (bi daha olsa bir daha uğraşırım)
                 }
             }
 
@@ -59,7 +63,7 @@ namespace Odev_v9.Controllers
 
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login() //üsttekini aynısı
         {
             return View();
         }
@@ -91,6 +95,24 @@ namespace Odev_v9.Controllers
                     if (token != null)
                     {
                         HttpContext.Session.SetString("Token", token.token);
+                        string tokken = HttpContext.Session.GetString("Token");
+                        string jsonPayload = Base64UrlHelper.Base64UrlDecode(tokken.Split('.')[1]);
+                        var payload = JsonConvert.DeserializeObject<JwtPayload>(jsonPayload);
+                        string IsYazar = (payload.IsYazar);
+                        string IsUser = (payload.IsUser);
+                        string IsAdmin = (payload.IsAdmin);
+                        if (IsUser == "true") //bunlar da aslında _layout için yapıldı
+                        {
+                            HttpContext.Session.SetString("User","Okur"); //çok okur
+                            if (IsYazar == "true")
+                            {
+                                HttpContext.Session.SetString("Yazar", "Yazar,Çok yazar"); //Abi 2 milyar 250 milyoncuk - 2500 kilometre yol gittik abi
+                                if (IsAdmin == "true") 
+                                {
+                                    HttpContext.Session.SetString("Admin", "Biz sizi banlatmadık kicklettik"); //Biz terbiyesizlik yapmadığımız halde bizi warrocktrden banlattınız 
+                                }
+                            }
+                        }
                         return RedirectToAction("Success"); // Başarı durumunda yönlendirme
                     }
                 }
@@ -118,19 +140,36 @@ namespace Odev_v9.Controllers
 
                         return RedirectToAction("DisplayRequirements");
                     }
-                    //TempData["Error"] = $"Token deserialization error: {ex.Message}";
-                    //return RedirectToAction("Error");
+                    
                 }
 
-
-                //var mesaj = result.Content.ReadFromJsonAsync<string>();
-                
             }
 
             return View();
         }
+        public async Task<IActionResult> Logout() //çıkış tarafı 
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Remove("Token"); //token sil
+            if (HttpContext.Session.GetString("User") != null) //üsttekileri tek tek sil
+            {
+                HttpContext.Session.Remove("User");
 
-        public IActionResult DisplayRequirementsL()
+                if (HttpContext.Session.GetString("Yazar") != null)
+                {
+                    HttpContext.Session.Remove("Yazar");
+
+                    if (HttpContext.Session.GetString("Admin") != null)
+                    {
+                        HttpContext.Session.Remove("Admin");
+                    }
+                }
+            }
+                                    
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult DisplayRequirementsL() //buda maksat viewdi
         {
             // TempData'dan veriyi alma
             if (TempData["Requirements"] is string requirementsJson)
@@ -141,19 +180,19 @@ namespace Odev_v9.Controllers
 
             return View(new List<JsonHata>());
         }
-        public IActionResult DisplayRequirements()
+        public IActionResult DisplayRequirements()//buda maksat viewdi
         {
             // TempData'dan veriyi alma
             if (TempData["Requirements"] is string requirementsJson)
             {
-                //List<JsonHata> requirements = JsonConvert.DeserializeObject<List<JsonHata>>(requirementsJson);
+                
                 ViewBag.ResponseContent = requirementsJson;
-                //return View();
+                
             }
 
             return View();
         }
-        public IActionResult Error()
+        public IActionResult Error() //buda maksat viewdi
         {
             // Hata sayfasına yönlendirme
             if (TempData["Error"] is string errorMessage)
@@ -163,7 +202,7 @@ namespace Odev_v9.Controllers
 
             return View();
         }
-        public IActionResult Success()
+        public IActionResult Success() //buda maksat viewdi yok galiba bu da varsada vardır doğrudur.
         {
             // Başarı durumunu gösteren bir View
             return View();

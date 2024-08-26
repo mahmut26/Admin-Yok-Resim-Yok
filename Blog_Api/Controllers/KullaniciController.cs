@@ -21,99 +21,70 @@ namespace Blog_Api.Controllers
             _context = context;
         }
         
+
+
+        /// <summary>
+        /// Katagori ekliyor bu takip sistemli olarak düşününcene. Autorization gerekli tabiki
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
         [HttpPost("kategori-ekle")]
         [Authorize(AuthenticationSchemes = "Bearer", Policy = "Kullanici")]
         public async Task<IActionResult> KategoriEkle(Link link)
         {
-            // Kullanıcıyı bul
-            Kullanici kullanici = _context.kullanicis.FirstOrDefault(x => x.Name == link.sorgu1);
+            
+            Kullanici kullanici = _context.kullanicis.FirstOrDefault(x => x.Name == link.sorgu1); //mantıken bunun çalışmama imkanı yok ama olur mu olur kalsın 
             if (kullanici == null)
             {
-                return NotFound("Kullanıcı bulunamadı.");
+                return NotFound("Kullanıcı bulunamadı."); //api testi için yapmıştım 
             }
 
-            // Kategoriyi bul
-            var kategoriEntity = _context.kategoris.FirstOrDefault(x => x.Name == link.sorgu2);
+  
+            var kategoriEntity = _context.kategoris.FirstOrDefault(x => x.Name == link.sorgu2); ////mantıken bunun çalışmama imkanı yok ama olur mu olur kalsın 
             if (kategoriEntity == null)
             {
-                return NotFound("Kategori bulunamadı.");
+                return NotFound("Kategori bulunamadı.");//api testi için yapmıştım . bunları zaten token ve sql den çekiyor. devamı diğer kontrollerde
             }
-            // Kullanıcının kategoriId'sini güncelle
-            kullanici.katid = kategoriEntity.Id;
 
-            //Kategori a =_context.kategoris.FirstOrDefault(x=>x.Name== kategori);
-            if (kullanici.Kategoriler == null)
+            kullanici.katid = kategoriEntity.Id; //gereksiz herhalde bu da yaptık bi kere o zaman mantıklı gelmişse demek
+
+
+            if (kullanici.Kategoriler == null) //boş mu 
             {
-                kullanici.Kategoriler = new List<Kategori>();
+                kullanici.Kategoriler = new List<Kategori>(); //yoksa yap
             }
-            kullanici.Kategoriler.Add(kategoriEntity);
-            //var kategor = await _context.kategoris.Where(k => k.Name == kategori).Select(x => x.Id);
+            kullanici.Kategoriler.Add(kategoriEntity); //ekle
 
-            //Kategori kateg = _context.kategoris.FirstOrDefault(x => x.Id == kategoriEntity.Id);
-            //kullanici.Kategoriler = kateg.;
-
-            // Değişiklikleri kaydet
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); //kaydet
 
             return Ok("Kategori başarıyla eklendi.");
-            //var kullanici_idsi = _context.kullanicis.Where(X => X.Name == name).Select(a => a.Id);
-            //var kullanici_ismi = _context.kullanicis.FirstOrDefault(x => x.Name == name);
-            //var kategori_idsi = _context.kategoris.Where(X => X.Name == kategori).Select(a => a.Id).ToList();
-            //int id = kategori_idsi.ToList();
-            //var b = a.Select(a => a.kategoriId = c.Where(X => X.Id));
-            //var kullanicilar = kullaniciListesi.Where(x => x.Name == name).ToList();
-            //var kullanici = _context.kullanicis.Where(x => x.katid == kategori_idsi[0]);
-            //var kullanici_id_katid = _context.kullanicis.Where(X => X.Name == name).Select(a => a.katid).ToList();
-            //if (kullanici_id_katid[0] == null)
-            //{
-            //    kullanici_id_katid[0]. = kategori_idsi[0]; // Yeni kategoriId değeri
-            //    await _context.SaveChangesAsync();
-            //}
-            //else
-            //{
-
-            //}
-
-            //_context.kullanicis.Add(kullanici_ismi.Select(x => x.katname);
-
-            //_context.SaveChanges();
-
-
-            //Db den ÇEk !!
-            //db den kullanıcı katogorisini çek, sonra da buna göre makaleleri getir
-            //var kategoriIds = await _context.kullanicis
-            //            .Where(k => k.Id == user)
-            //            .SelectMany(k => k.Kategoriler)
-            //            .Select(c => c.Id)
-            //            .ToListAsync();
-
-            //var makaleler = await _context.makales
-            //    .Where(m => kategoriIds.Contains(m.KategoriId))
-            //    .ToListAsync();
-
-            //return Ok(makaleler);
-            //return BadRequest();
+           
 
         }
         
+
+        /// <summary>
+        /// Bu da Takipteki başlıkları getiriyor. Öyle olmalı en azından uzun süre oldu bunu yapalı keşke önceden açıklama yazsaydım
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost("baslik-goster")]
         [Authorize(AuthenticationSchemes = "Bearer", Policy = "Kullanici")]
         public async Task<IActionResult> BaslikGoster(Sorgu user)
         {
-            var a = _context.kullanicis.Where(X => X.Name == user.Name);
-            //Db den ÇEk !!
-            //db den kullanıcı katogorisini çek, sonra da buna göre makaleleri getir
-            var kategoriIds = await _context.kullanicis
+            var a = _context.kullanicis.Where(X => X.Name == user.Name); //ismi ara 
+            
+            var kategoriIds = await _context.kullanicis  //hatırlamıyorum
                         .Where(k => k.Name == user.Name)
                         .SelectMany(k => k.Kategoriler)
                         .Select(c => c.Id)
                         .ToListAsync();
 
-            var makaleler = await _context.makales
+            var makaleler = await _context.makales 
                 .Where(m => kategoriIds.Contains(m.KategoriId))
                 .ToListAsync();
 
-            var baslik=makaleler.Select(x=> new { 
+            var baslik=makaleler.Select(x=> new {  //başlıkları getir
                 x.Id,
                 x.Baslik,
                 }).ToList();
@@ -131,36 +102,21 @@ namespace Blog_Api.Controllers
 
             return Ok(aa);
 
-            //var don = makaleler.SelectMany(x => x.Baslik);
-            //return Ok(don);
-            //if (yazar == null)
-            //{
-            //    return BadRequest();
-            //}
-            //var donus = new Makale
-            //{
-            //    //db de ara, makale == yazar.yazarname
-            //    //Baslik = 
-            //    //DB de ara yoksa oluştur
-            //    //kategori = 
-            //    //{
-            //    //    kategori.Id=
-            //    //    kategori.Name=kategori
-            //    //}
-
-            //};
-            //return Ok(donus);
-            //return Ok(a);
+           
         }
+
+        /// <summary>
+        /// Bu da Okumaya yarıyor. Bastın mesela hop isim döndü ismi db de arayıp döndürüyor. Basit olsun maksat o
+        /// </summary>
+        /// <param name="sorgu"></param>
+        /// <returns></returns>
         [HttpPost("oku")]
         [Authorize(AuthenticationSchemes = "Bearer", Policy = "Kullanici")]
         public async Task<IActionResult> Oku(Sorgu sorgu)
         {
-            //int id = Convert.ToInt32(sorgu.Name);
-            var makale = await _context.makales.FirstOrDefaultAsync(x=>x.Baslik==sorgu.Name);
-            //MVC DEN GELSİN DB DEN DE ÇEKİP MVC YE GÖNDERSİN
-
-            //getirilen makalelerin linkine basılınca gelsin gitsin nasıl olur bilmiyorum !!
+            
+            var makale = await _context.makales.FirstOrDefaultAsync(x=>x.Baslik==sorgu.Name); //başlıktan getir 
+            
             return Ok(makale);
         }
     }

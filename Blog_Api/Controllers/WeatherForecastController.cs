@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Blog_Api.Controllers
 {
-    [ApiController]
+    [ApiController] //stabil yer API için 
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {

@@ -19,22 +19,22 @@ namespace Blog_Api
 
             builder.Services.AddControllers();
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(); //ben mi yapmýþým
 
-            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddEndpointsApiExplorer();//ben mi yapmýþým
 
             builder.Services.AddDbContext<Blog_DB>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("connStr"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("connStr"));//db ayarý
             });
 
             builder.Services.AddDbContext<Identity_DB>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext"));//db ayarý
             });
 
             builder.Services.AddAuthentication(X => {
-                X.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                X.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //bu da uðraþtýrdý yalan yok jwt ayarý bu bak token
                 X.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
@@ -51,13 +51,13 @@ namespace Blog_Api
                         };
                 });
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<Identity_DB>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<Identity_DB>().AddDefaultTokenProviders(); //ben mi yapmýþým
 
-            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<TokenService>(); //servis eklemesi bunu ben yapmadým yalan yok 
 
-            builder.Services.AddScoped<EmailService>();
- 
-            builder.Services.AddSingleton<EmailService>();
+            builder.Services.AddScoped<EmailService>();//servis eklemesi bunu ben yapmadým yalan yok 
+
+            builder.Services.AddSingleton<EmailService>();//servis eklemesi bunu ben yapmadým yalan yok burada biþiler fazla diyordu birileri ama bunlarsýz da çalýþmýyordu sebebini bilmiyorum ama çalýþýyorsa dokunma kuralý uygulandý !!
 
 
 
@@ -71,13 +71,13 @@ namespace Blog_Api
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.MaxDepth = 1024; 
+                options.JsonSerializerOptions.MaxDepth = 1024; //Hata veriyordu çözüm buymuþ bilmiyordum
             });
             builder.Services.AddMvc(options =>
             {
-                options.SuppressAsyncSuffixInActionNames = false;
+                options.SuppressAsyncSuffixInActionNames = false; //Hata çözümünden geldi herhalde bu
             });
-            builder.Services.AddAuthorization(options =>
+            builder.Services.AddAuthorization(options => //policy eklemece bura
             {
                 options.AddPolicy("Admin", policy =>
                     policy.RequireClaim("IsAdmin", "true")); 
@@ -98,7 +98,7 @@ namespace Blog_Api
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthorization();
+            app.UseAuthorization(); //burasý ters olacak demeyin çalýþýyorsa dokunmam ben 
             app.UseAuthentication();
             
 

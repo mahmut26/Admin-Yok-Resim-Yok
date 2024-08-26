@@ -9,9 +9,9 @@ namespace DataLayer.Model_Login
 {
     public class AppUser : IdentityUser
     {
-        public bool IsAdmin { get; set; }
-        public bool IsYazar { get; set; }
-        public bool IsKullanici { get; set; }
+        public bool IsAdmin { get; set; } //claim olacak abisi büyüyünce
+        public bool IsYazar { get; set; } //claim olacak abisi büyüyünce
+        public bool IsKullanici { get; set; } //claim olacak abisi büyüyünce
 
     }
 }

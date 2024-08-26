@@ -23,7 +23,7 @@ namespace Blog_Api.Controllers
     public class LoginController : ControllerBase
     {
 
-        //mvc den alsın, db ye baksın ok ise user rolünü dönsün. Role göre de mvc kontrolcülere gidebilir.
+        
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
@@ -39,6 +39,12 @@ namespace Blog_Api.Controllers
             _ctxt = blog;
         }
 
+
+        /// <summary>
+        /// Mantığı anlatmağa gerek yok herhalde. Varsada Normal Login mantığı işte
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("giris")]
         public async Task<IActionResult> giris([FromBody] LoginViewModel model)
         {
@@ -57,7 +63,7 @@ namespace Blog_Api.Controllers
 
                 if (cat == null)
                 {
-                    // Kullanıcı mevcut değilse yeni bir kullanıcı oluştur
+                    
                     cat = new Kullanici
                     {
                         Name = model.Email,
@@ -78,7 +84,13 @@ namespace Blog_Api.Controllers
             return Unauthorized("Invalid login attempt");
         }
 
-        [HttpPost] //modeli json a serialize etmek gerekli ki mvcde çalışsın!!
+
+        /// <summary>
+        /// Register olmalıyım ya hani
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost] 
         [Route("olustur")]
         public async Task<IActionResult> olustur(RegisterViewModel model)
         {
@@ -103,6 +115,15 @@ namespace Blog_Api.Controllers
 
             return BadRequest(result.Errors);
         }
+
+
+        /// <summary>
+        /// burada normalde admin panelinden yapılacaktı da yada mail gönderip linke bas işlemi gerek yok buna admine mail atsın kullanıcı çok istiyorsa. admin olmadan zaten makale ekleyemiyor, kullanıcı da olmasın bi zahmet 
+        /// Çözüm : %100 Bu arada bu kod benim değil Token ve Mail kısmı ama ayarlarını anlatacam
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [HttpGet("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {

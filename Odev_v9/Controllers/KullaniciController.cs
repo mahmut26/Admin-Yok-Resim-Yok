@@ -22,16 +22,17 @@ namespace Odev_v9.Controllers
             _httpClientFactory = httpClientFactory;
             context = _DB;
         }
-        [HttpGet]
-        public IActionResult KategoriEkle()
+        [HttpGet("TakipEdilecekKategori")]
+        public IActionResult TakibeTakip() //normalde burda db koymayacaktım. Ama zaman yetmez dedim ve db yi de buraya ekledim . Birde dropbox için çok uğraştım viewde. ama normalde api den çekilebilecek bişi
         {
             List<string> categories = context.kategoris.Select(x => x.Name).ToList();
             ViewBag.Categories = new SelectList(categories, "Name");
             return View();
-            //return View();
+           
         }
-        [HttpPost]
-        public async Task<IActionResult> Ekle(Link link)
+
+        [HttpPost] //takip kısmı burayı çalıştırıyordu galiba evet öyle olmalı
+        public async Task<IActionResult> Ekle(Link link) 
         {
             string token = HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
@@ -49,13 +50,13 @@ namespace Odev_v9.Controllers
                 ViewBag.Mesaj = "Token yok olm nereye gidiyorsun";
                 return View();
             }
-            string jsonPayload = Base64UrlHelper.Base64UrlDecode(token.Split('.')[1]);
+            string jsonPayload = Base64UrlHelper.Base64UrlDecode(token.Split('.')[1]); //işte burası token i parçalıyıp işliyor
             var payload = JsonConvert.DeserializeObject<JwtPayload>(jsonPayload);
             string yazarid = (payload.Name); //name'i aldı
 
             link.sorgu1= yazarid;
 
-            var content = new StringContent(JsonConvert.SerializeObject(link), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(link), Encoding.UTF8, "application/json"); //api ye gönderiyor
 
 
             try
@@ -65,13 +66,13 @@ namespace Odev_v9.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseContent = await response.Content.ReadAsStringAsync();
-                    ViewBag.Mesaj = responseContent;
+                    ViewBag.Mesaj = responseContent; //işlem sonucu
                     return View();
                 }
                 else
                 {
                     // API hatalarını işleme
-                     //StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                    
                     ViewBag.Mesaj = $"{response.StatusCode}";
                     return View();
                 }
@@ -83,13 +84,8 @@ namespace Odev_v9.Controllers
             }
 
         }
-        //[HttpGet]
-        //public IActionResult Baslik()
-        //{
 
-        //    return View();
-        //}
-        [HttpGet]
+        [HttpGet] //başlıkları gösteriyor işte 
         public async Task<IActionResult> Baslik()
         {
             string token = HttpContext.Session.GetString("Token");
@@ -139,7 +135,7 @@ namespace Odev_v9.Controllers
                     // API hatalarını işleme
                     ViewBag.Mesaj = $"{response.StatusCode}";
                     return View("Ekle");
-                    //return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                   
                 }
             }
             catch (HttpRequestException ex)
@@ -150,7 +146,7 @@ namespace Odev_v9.Controllers
 
         }
         [HttpGet]
-        public async Task<IActionResult> Icerik(string sorgu) //Burada MVC döndürecek. MVC YOK !!!
+        public async Task<IActionResult> Icerik(string sorgu) //Burada MVC döndürecek. MVC YOK !!! Artık var ! çalışıyor (galiba). 
         {
             string token = HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
@@ -182,7 +178,7 @@ namespace Odev_v9.Controllers
                 {
                     string responseContent = await response.Content.ReadAsStringAsync();
 
-                    var linkInt2List = JsonConvert.DeserializeObject<MakaleVM_v2>(responseContent);
+                    var linkInt2List = JsonConvert.DeserializeObject<MakaleVM_v2>(responseContent); 
 
                     var yazar = context.yazars.Find(linkInt2List.YazarId);
                     var kateg = context.kategoris.Find(linkInt2List.KategoriId);
@@ -195,7 +191,7 @@ namespace Odev_v9.Controllers
                         Yaz = yazar.Name
                     };
 
-                    return View(doncek);
+                    return View(doncek); //Naptık Ettik makalenizi gettik
                 }
                 else
                 {
@@ -203,7 +199,7 @@ namespace Odev_v9.Controllers
 
                     ViewBag.Mesaj = $"{response.StatusCode}";
                     return View("Ekle");
-                    //return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                   
                 }
             }
             catch (HttpRequestException ex)

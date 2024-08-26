@@ -22,23 +22,24 @@ namespace Blog_Api.Controllers
         }
 
         [HttpPost("basliklar")]
-        [Authorize(AuthenticationSchemes = "Bearer", Policy = "Yazar")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "Yazar")] //şunun için bir gün harcadım kitapsız 
         public async Task<IActionResult> yazilanlar(Sorgu yazar)
         {
-            //int id = Convert.ToInt32(yazar); 
-            if(yazar == null)
+             
+            if(yazar == null) //nasıl null gelecekse artık. Eski koddan kaldı herhalde 
             {
                 return BadRequest();
             }
-            var yazarid= await _context.yazars.Where(y => y.Name == yazar.Name).Select(x => x.Id).ToListAsync();
+
+            var yazarid= await _context.yazars.Where(y => y.Name == yazar.Name).Select(x => x.Id).ToListAsync(); // işlem yapıldı (evet okuyan da görebiliyor)
             int sorgu = yazarid[0];
             var makaleler = await _context.makales.Where(m => m.YazarId == sorgu).ToListAsync();
             var basliklar = _context.makales
                              .Where(m => m.YazarId == sorgu)
                              .Select(m => m.Baslik)
-                             .ToList();
+                             .ToList(); //yazılan başlıklar alındı 
 
-            List<Sorgu> aa = new List<Sorgu>();
+            List<Sorgu> aa = new List<Sorgu>(); //bunun içinde sadece bir string olduğu için ve benim deserialize da hata çıkartmasından bıktığımdan viewmodeller çoğaldıydı
             foreach (var item in basliklar)
             {
                 aa.Add(new Sorgu
@@ -55,12 +56,12 @@ namespace Blog_Api.Controllers
         [Authorize(AuthenticationSchemes = "Bearer", Policy = "Yazar")]
         public async Task<IActionResult> MakaleYaz(MakaleViewModel model)
         {
-            if (model.Baslik == null)
+            if (model.Baslik == null)// api testi bu 
             {
                 return BadRequest();
             }
 
-            var catid = await _context.kategoris.FirstOrDefaultAsync(k => k.Name == model.Cat);
+            var catid = await _context.kategoris.FirstOrDefaultAsync(k => k.Name == model.Cat); //yoksa oluştur - kategori
 
             if (catid == null)
             {
@@ -73,7 +74,7 @@ namespace Blog_Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var yazid = await _context.yazars.FirstOrDefaultAsync(k => k.Name == model.Yaz);
+            var yazid = await _context.yazars.FirstOrDefaultAsync(k => k.Name == model.Yaz); //yoksa oluştur -- yazar nasıl olacak bilmiyorum ama zamanında yapmıştım sonra gitti başka yerlere çaktırmayın :P
 
             if (yazid == null)
             {
@@ -87,9 +88,9 @@ namespace Blog_Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            var kadi = await _context.kategoris.Where(y => y.Name == model.Cat).Select(x => x.Id).ToListAsync();
+            var kadi = await _context.kategoris.Where(y => y.Name == model.Cat).Select(x => x.Id).ToListAsync(); //id getir
 
-            var yadi = await _context.yazars.Where(y => y.Name == model.Yaz).Select(x => x.Id).ToListAsync();
+            var yadi = await _context.yazars.Where(y => y.Name == model.Yaz).Select(x => x.Id).ToListAsync(); //id getir
 
             Makale donus = new Makale()
             {
@@ -99,11 +100,11 @@ namespace Blog_Api.Controllers
                 YazarId = yadi[0],
             };
 
-            Kategori a = _context.kategoris.FirstOrDefault(x=>x.Name==model.Cat);
-
+            Kategori a = _context.kategoris.FirstOrDefault(x=>x.Name==model.Cat);//oluşanı al 
+             
             donus.kategori=a;
 
-            Yazar b = _context.yazars.FirstOrDefault(x => x.Name == model.Yaz);
+            Yazar b = _context.yazars.FirstOrDefault(x => x.Name == model.Yaz); //oluşanı al 
 
             donus.yazar = b;
 
@@ -112,7 +113,7 @@ namespace Blog_Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok("Kaydoldu");
+            return Ok("Kaydoldu"); //yalan yok burası değişti az daha da ne yaptım hatırlamıyorum ara ara yazmak lazım böyle
              
 
         }

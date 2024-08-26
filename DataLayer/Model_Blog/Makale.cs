@@ -13,9 +13,9 @@ namespace DataLayer.Model_Blog
         public string Baslik { get; set; }
         
         public string Icerik { get; set; }
-        //public ICollection<Resim> resim { get; set; }
+        //public ICollection<Resim> resim { get; set; } //özellik bro
 
-        //public Yorum yorum { get; set; }
+        //public Yorum yorum { get; set; } //özellik bro
 
         public int YazarId { get; set; }
 
